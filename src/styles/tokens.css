@@ -1,0 +1,90 @@
+/* Token thiet ke - phong cach app mobile (mockup teal) */
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --text: #101828;
+  --muted: #98a2b3;
+  --primary: #0f766e;
+  --primary-dark: #115e59;
+  --primary-soft: #e6f4f2;
+  --navy: #0f172a;
+  --success: #12b76a;
+  --warning: #f59e0b;
+  --danger: #e5484d;
+  --border: #e9edf3;
+  --shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+}
+
+[data-theme='dark'] {
+  --bg: #0b1014;
+  --surface: #141b21;
+  --text: #eef2f6;
+  --muted: #8b98a5;
+  --primary: #2dd4bf;
+  --primary-dark: #14b8a6;
+  --primary-soft: #12312e;
+  --navy: #0b1014;
+  --border: #233039;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, 'Segoe UI', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+input,
+select {
+  font: inherit;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--primary);
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--warning);
+}
+
+.link-btn {
+  color: var(--primary);
+  font-size: 13px;
+}

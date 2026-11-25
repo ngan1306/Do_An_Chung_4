@@ -37,6 +37,56 @@
   letter-spacing: -0.5px;
 }
 
+.account-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-top: 12px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.account-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.account-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+  line-height: 1.25;
+}
+
+.account-details strong,
+.account-details span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-details strong {
+  font-size: 13px;
+}
+
+.account-details span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .auth-phone {
   height: auto;
   min-height: 540px;

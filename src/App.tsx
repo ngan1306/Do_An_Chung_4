@@ -33,8 +33,11 @@ const SCREENS: Record<AppTab, () => ReactElement> = {
 
 function Main() {
   const { activeTab, setActiveTab } = useHome();
+  const { user } = useAuth();
   const Screen = SCREENS[activeTab] ?? DashboardScreen;
   const header = HEADERS[activeTab];
+  const accountName = user?.displayName || 'Tài khoản';
+  const accountInitial = (user?.displayName || user?.email || 'T').trim().charAt(0).toUpperCase();
 
   return (
     <div className="stage">
@@ -42,6 +45,13 @@ function Main() {
         <header className="phone-header">
           <p className="eyebrow">{header.eyebrow}</p>
           <h1>{header.title}</h1>
+          <div className="account-badge" aria-label={`Tài khoản ${accountName} ${user?.email ?? ''}`}>
+            <span className="account-avatar" aria-hidden="true">{accountInitial}</span>
+            <span className="account-details">
+              <strong>{accountName}</strong>
+              <span>{user?.email}</span>
+            </span>
+          </div>
         </header>
         <main className="phone-body">
           <Screen />

@@ -53,7 +53,7 @@ export interface HistoryPoint {
 /** Trạng thái thực tế của thiết bị, phản hồi từ ESP32. */
 export type DeviceState = 'ON' | 'OFF' | 'UNKNOWN';
 
-export type DeviceKind = 'light' | 'fan' | 'relay' | 'pump' | 'curtain';
+export type DeviceKind = 'light' | 'fan' | 'relay' | 'pump';
 
 export interface Device {
   id: string;

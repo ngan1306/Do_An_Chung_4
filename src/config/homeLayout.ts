@@ -6,7 +6,7 @@ import type { Device, Room } from '../types';
  */
 export const ROOMS: Room[] = [
   { id: 'living', name: 'Phòng khách', hint: 'Khu vực sinh hoạt chung' },
-  { id: 'bedroom', name: 'Phòng ngủ', hint: 'Điều hoà & rèm cửa' },
+  { id: 'bedroom', name: 'Phòng ngủ', hint: 'Đèn & quạt' },
   { id: 'kitchen', name: 'Nhà bếp', hint: 'Quạt hút & đèn bếp' },
   { id: 'garden', name: 'Sân vườn', hint: 'Bơm nước & đèn ngoài trời' },
 ];
@@ -14,7 +14,6 @@ export const ROOMS: Room[] = [
 export const DEVICES: Device[] = [
   { id: 'light-living', name: 'Đèn trần', roomId: 'living', kind: 'light' },
   { id: 'fan-living', name: 'Quạt trần', roomId: 'living', kind: 'fan' },
-  { id: 'curtain-living', name: 'Rèm cửa', roomId: 'living', kind: 'curtain' },
   { id: 'light-bedroom', name: 'Đèn ngủ', roomId: 'bedroom', kind: 'light' },
   { id: 'fan-bedroom', name: 'Quạt điều hoà', roomId: 'bedroom', kind: 'fan' },
   { id: 'light-kitchen', name: 'Đèn bếp', roomId: 'kitchen', kind: 'light' },

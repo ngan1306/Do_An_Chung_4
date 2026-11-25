@@ -6,20 +6,19 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { HomeProvider } from './src/providers/HomeProvider';
 import { HomeContext, useHome } from './src/state/HomeContext';
-import type { AppTab } from './src/state/HomeContext';
 import { DashboardScreen } from './src/screens/DashboardScreen';
 import { RoomsScreen } from './src/screens/RoomsScreen';
 import { SchedulesScreen } from './src/screens/SchedulesScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 
-const TABS: { key: AppTab; label: string }[] = [
+const TABS = [
   { key: 'dashboard', label: '📊 Tổng quan' },
   { key: 'rooms', label: '🏠 Phòng' },
   { key: 'schedules', label: '⏰ Hẹn giờ' },
   { key: 'settings', label: '⚙️ Cài đặt' },
 ];
 
-const SCREENS: Record<AppTab, React.ComponentType> = {
+const SCREENS = {
   dashboard: DashboardScreen,
   rooms: RoomsScreen,
   schedules: SchedulesScreen,

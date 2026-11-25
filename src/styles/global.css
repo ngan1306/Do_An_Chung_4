@@ -37,6 +37,46 @@
   letter-spacing: -0.5px;
 }
 
+.auth-phone {
+  height: auto;
+  min-height: 540px;
+}
+
+.auth-body {
+  justify-content: center;
+  padding-bottom: 24px;
+}
+
+.auth-card {
+  width: 100%;
+}
+
+.auth-description {
+  margin: 0 0 18px;
+}
+
+.auth-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+
+.auth-switch {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.auth-switch button {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+[data-theme='dark'] .auth-switch button {
+  color: var(--primary);
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;

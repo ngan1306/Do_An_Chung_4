@@ -13,12 +13,128 @@
  * Chay: npx tsx server/api.server.ts   (hoac bien ra JS bang tsc)
  */
 import express from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import { query } from './db/database.service';
+import {
+  AUTH_SESSION_TTL_MS,
+  deleteSession,
+  getUserForToken,
+  loginUser,
+  registerUser,
+} from './auth.service';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const SESSION_COOKIE = 'smarthome_session';
+
+function readSessionToken(req: Request): string | null {
+  const cookies = req.headers.cookie?.split(';') ?? [];
+  const cookie = cookies.find((item) => item.trim().startsWith(`${SESSION_COOKIE}=`));
+  return cookie ? cookie.trim().slice(SESSION_COOKIE.length + 1) || null : null;
+}
+
+function setSessionCookie(res: Response, token: string): void {
+  const attributes = [
+    `${SESSION_COOKIE}=${token}`,
+    'Path=/api',
+    'HttpOnly',
+    'SameSite=Lax',
+    `Max-Age=${Math.floor(AUTH_SESSION_TTL_MS / 1000)}`,
+  ];
+  if (process.env.NODE_ENV === 'production') attributes.push('Secure');
+  res.setHeader('Set-Cookie', attributes.join('; '));
+}
+
+function clearSessionCookie(res: Response): void {
+  res.setHeader(
+    'Set-Cookie',
+    `${SESSION_COOKIE}=; Path=/api; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+  );
+}
+
+async function requireAuthentication(req: Request, res: Response, next: NextFunction) {
+  const token = readSessionToken(req);
+  if (!token) return res.status(401).json({ success: false, error: 'Vui lòng đăng nhập' });
+
+  const session = await getUserForToken(token);
+  if (session.status === 'unavailable') {
+    return res.status(503).json({ success: false, error: 'Không kiểm tra được phiên đăng nhập' });
+  }
+  if (session.status !== 'valid') {
+    clearSessionCookie(res);
+    return res.status(401).json({ success: false, error: 'Phiên đăng nhập đã hết hạn' });
+  }
+
+  res.locals.authUser = session.user;
+  next();
+}
+
+// Health check and authentication endpoints are public; home data requires a valid account session.
+app.use('/api', (req, res, next) => {
+  const path = req.originalUrl.split('?')[0];
+  if (path === '/api/health' || path.startsWith('/api/auth/')) return next();
+  return requireAuthentication(req, res, next);
+});
+
+app.post('/api/auth/register', async (req, res) => {
+  const displayName = typeof req.body?.displayName === 'string' ? req.body.displayName.trim() : '';
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+
+  if (displayName.length < 2 || displayName.length > 80) {
+    return res.status(400).json({ success: false, error: 'Tên hiển thị cần từ 2 đến 80 ký tự' });
+  }
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ success: false, error: 'Email không hợp lệ' });
+  }
+  if (password.length < 8 || password.length > 128) {
+    return res.status(400).json({ success: false, error: 'Mật khẩu cần từ 8 đến 128 ký tự' });
+  }
+
+  const result = await registerUser(displayName, email, password);
+  if (result.status === 'exists') {
+    return res.status(409).json({ success: false, error: 'Email này đã được đăng ký' });
+  }
+  if (result.status !== 'created') {
+    return res.status(503).json({ success: false, error: 'Không tạo được tài khoản. Kiểm tra database và chạy migration đăng nhập.' });
+  }
+
+  setSessionCookie(res, result.token);
+  return res.status(201).json({ success: true, user: result.user });
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  if (!email || !password) {
+    return res.status(400).json({ success: false, error: 'Nhập email và mật khẩu' });
+  }
+
+  const result = await loginUser(email, password);
+  if (result.status === 'invalid') {
+    return res.status(401).json({ success: false, error: 'Email hoặc mật khẩu không đúng' });
+  }
+  if (result.status !== 'authenticated') {
+    return res.status(503).json({ success: false, error: 'Không đăng nhập được. Kiểm tra database và migration đăng nhập.' });
+  }
+
+  setSessionCookie(res, result.token);
+  return res.json({ success: true, user: result.user });
+});
+
+app.get('/api/auth/session', requireAuthentication, (_req, res) => {
+  res.json({ success: true, user: res.locals.authUser });
+});
+
+app.post('/api/auth/logout', async (req, res) => {
+  const token = readSessionToken(req);
+  if (token) await deleteSession(token);
+  clearSessionCookie(res);
+  res.json({ success: true });
+});
 
 app.get('/api/health', async (_req, res) => {
   const result = await query<{ recordset: { database_name: string }[] }>(

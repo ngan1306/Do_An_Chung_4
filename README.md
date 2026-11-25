@@ -44,6 +44,14 @@
 
 5. Mở `http://localhost:5173`. Kiểm tra API và SQL tại `http://localhost:4000/api/health`.
 
+### Đăng ký và đăng nhập
+
+- Khi mở app, đăng ký tài khoản bằng họ tên, email và mật khẩu từ 8 ký tự; tài khoản mới được đăng nhập ngay sau khi tạo.
+- Nếu database `SmartHome` đã được tạo từ trước, chạy `database/migrations/002_authentication.sql` trong SSMS để thêm bảng tài khoản và phiên đăng nhập. Với database mới, chạy lại `database/schema.sql` đã có các bảng này.
+- Tài khoản dùng chung một hệ thống nhà thông minh; mỗi tài khoản hiện xem cùng dữ liệu thiết bị và cảm biến.
+- Mật khẩu được băm bằng scrypt. Phiên đăng nhập dùng cookie `HttpOnly`, hết hạn sau 30 ngày; API dữ liệu yêu cầu phiên đăng nhập hợp lệ.
+- Đăng xuất trong tab **Kết nối**.
+
 Các lệnh riêng:
 
 ```bash
@@ -184,6 +192,7 @@ Nạp sketch lên board, mở Serial Monitor để bổ sung log nếu cần, r�
 ## API chính
 
 - `GET /api/health` — trạng thái kết nối database.
+- `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/session`, `POST /api/auth/logout` — quản lý tài khoản và phiên đăng nhập.
 - `/api/telemetry` — lưu và đọc lịch sử cảm biến.
 - `/api/devices` — đọc/cập nhật trạng thái thiết bị.
 - `/api/schedules` — quản lý lịch hẹn.

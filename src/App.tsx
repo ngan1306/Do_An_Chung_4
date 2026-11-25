@@ -2,6 +2,8 @@
 import type { ReactElement } from 'react';
 import { HomeProvider } from './state/HomeProvider';
 import { useHome, type AppTab } from './state/HomeContext';
+import { AuthProvider, useAuth } from './state/AuthContext';
+import { AuthScreen } from './screens/AuthScreen';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { RoomsScreen } from './screens/RoomsScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
@@ -66,10 +68,33 @@ function Main() {
   );
 }
 
-export default function App() {
+function AppContent() {
+  const { status } = useAuth();
+  if (status === 'checking') {
+    return (
+      <div className="stage">
+        <div className="phone auth-phone">
+          <header className="phone-header">
+            <p className="eyebrow">Chung cư thông minh</p>
+            <h1>Đang kiểm tra phiên…</h1>
+          </header>
+        </div>
+      </div>
+    );
+  }
+  if (status === 'unauthenticated') return <AuthScreen />;
+
   return (
     <HomeProvider>
       <Main />
     </HomeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

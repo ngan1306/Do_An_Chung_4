@@ -1,11 +1,13 @@
 /** Man hinh Ket noi - form broker + trang thai, giong mockup. */
 import { useEffect, useState } from 'react';
 import { useHome } from '../state/HomeContext';
+import { useAuth } from '../state/AuthContext';
 import { DEVICES } from '../config/homeLayout';
 import { Switch } from '../components/Switch';
 
 export function SettingsScreen() {
   const { config, connect, disconnect, status, statusDetail, theme, toggleTheme, deviceStates, toggleDevice } = useHome();
+  const { user, logout } = useAuth();
 
   const [host, setHost] = useState(config.host);
   const [port, setPort] = useState(String(config.port));
@@ -107,6 +109,14 @@ export function SettingsScreen() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="card">
+        <span className="card-title">Tài khoản</span>
+        <p className="muted">{user?.displayName} · {user?.email}</p>
+        <button type="button" className="ghost-btn" onClick={() => { disconnect(); void logout(); }}>
+          Đăng xuất
+        </button>
       </div>
     </div>
   );
